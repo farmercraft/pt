@@ -8,7 +8,7 @@ has $.mem_fpt          = "4G";
 has $.p_threads        = 32;
 has $.f_threads        = 0;
 has $.m_threads        = 4;
-has $.nossd_level      = 14;
+has $.nossd_level      = 34;
 has $.nossd            = "~/nossd/client";
 
 has $.nossd_mining     = False;
@@ -28,7 +28,7 @@ has $.file_type        = "*.fpt";
 has $.disk_avail       = "80G";
 has $.type             = "pg"; # pg,og
 has $.mount_prefix     = "/"; # eg. '/' or  '/f1' or  'f1,f2,f3' 
-has $.plots_dir        = $*KERNEL.hostname; # eg. "plots";
+has $.plots_dir        = "plots"; # eg. "plots";
 
 # bb args
 has $.bb               = "bladebit_cuda"; # bladebit,bladebit_cuda
@@ -42,7 +42,7 @@ has $.mmx_sink         = "~/sink/chia_plot_sink";
 has $.mmx_host         = "localhost";
 has $.mmx_level        = 8;
 has $.mmx_port         = 8444;     
-has $.mmx_single       = True;
+has $.mmx_single       = False;
 
 
 # spacemesh args

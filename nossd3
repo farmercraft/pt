@@ -1,0 +1,74 @@
+#!/usr/bin/env rakudo
+
+use lib 'lib';
+use lib '.';
+use plot;
+use util;
+use Conf;
+
+sub MAIN($dirs, $gpu = 0, $tmp_dir="/sdnv1/t1") 
+{
+    my $conf  = Conf.new;	
+    my @disks = parse_comma($dirs);
+    my $path = "";    
+    my $addr  = $conf.addr;
+    my $level = $conf.nossd_level;
+    say $level, $addr;
+    my $num   = (^10000).pick;
+    my $spath = '~/.nossd/' ~ $num;
+    my $sname = "";
+    my $nossd = $conf.nossd; 
+    
+
+    my @pf  = parse_comma($conf.mount_prefix);
+    for @pf -> $prefix {
+	if ($prefix ~~ '/') {
+	    $sname = 'localhost' ~ '_';
+	} else {
+    	    $sname = $sname ~ $prefix ~ '_';
+	}
+        for @disks -> $d {
+	    #say "dir: $d" ;
+	    my $f_dir="";
+	    if ($prefix ~~ '/') {
+	        $f_dir = '/sd' ~ $d ~ '/' ~ 'plots/';
+	    } else {
+	        $f_dir = '/' ~ $prefix ~ '/sd' ~ $d ~ '/' ~ 'plots/';
+	    }
+
+	    if ($f_dir.IO ~~ :e ) {
+	       #$sname = $sname ~ $d;
+               if ($conf.nossd_mining) {
+	          $path = $path ~ '-d,r ' ~ $f_dir ~ " ";
+	       } else {
+	          $path = $path ~ '-d,~t ' ~ $f_dir ~ " ";
+	       }
+	     }
+         }
+    }
+    $sname = $sname ~ $dirs;
+    if ($conf.nossd_mining) {
+       say "mining mode";
+       my $hostname = $*KERNEL.hostname;
+       say "qqx/tmux new -s $sname -d $nossd $path -a $addr/";
+       qqx/tmux new -s $sname -d $nossd $path -a $addr -s $spath -w $hostname/;
+    } else {
+       say "ploting mode";
+       if ($conf.notmp) {
+       	    $path = $path ~ ' --no-temp ';            
+       } else {
+       	    $path = $path ~ '-d,t ' ~ $tmp_dir;
+       }
+       say $path;
+       my $sname = 'plot_' ~ $dirs ~ '_' ~ $num;
+       my $pth_num = $conf.p_threads;
+       if ($conf.use_cpu) {
+       	  say "qqx/tmux new -s $sname -d $nossd $path -c $level -a $addr -s $spath --p-threads $pth_num --no-gpu-mining/";
+       	  qqx/tmux new -s $sname -d $nossd $path -c $level -a $addr -s $spath --p-threads $pth_num --no-gpu-mining/;
+       } else {
+       	  say "qqx/tmux new -s $sname -d $nossd $path -c $level -a $addr -s $spath -g $gpu -x $gpu --no-gpu-mining/";
+       	  qqx/tmux new -s $sname -d $nossd $path -c $level -a $addr -s $spath -g $gpu -x $gpu --no-gpu-mining/;
+
+       }
+    }
+}

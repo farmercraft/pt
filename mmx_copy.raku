@@ -43,6 +43,7 @@ sub MAIN($dirs)
 	      say "multi copy mode";
 	      my $sf        = $tmp_dir ~ $conf.file_type;
 	      say $sf;
+	      #my $sname = "mmx_copy_" ~ (^100000).pick;
 	      qqx/chia_plot_copy -d -t $host -- $sf/;
 	    }
 	}
