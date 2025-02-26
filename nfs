@@ -53,6 +53,11 @@ sub MAIN($op = "mount", $conf = "./nfs.conf")
 		say "mounting $host@$ip:$devs";
 		qqx/sudo rakudo pt $devs mount nfs $ip $host/;
 	    }
+	    if ($op ~~ "umount") {
+		say "umounting $host/*";
+	        my $path = "/" ~ $host ~ "/*";
+                qqx/sudo umount -f $path/;
+            }
 	    if ($op ~~ "add") {
 		say "adding plots dir: $devs";
 		qqx/rakudo pt $devs add mmx $host/;
