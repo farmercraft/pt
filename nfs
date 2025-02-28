@@ -60,7 +60,6 @@ sub MAIN($op = "mount", $conf = "./nfs.conf")
             }
 	    if ($op ~~ "stop") {
 		say "stoping nfs-kernel-server";
-                qqx/sudo umount -f $path/;
 		qqx/\/etc\/init.d\/nfs-kernel-server stop/;
             }
 	    if ($op ~~ "add") {
